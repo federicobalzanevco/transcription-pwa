@@ -1,11 +1,14 @@
-image: node:lts
+image: node:22
+
+variables:
+  npm_config_minimum_release_age: "0"
 
 pages:
   stage: deploy
 
   before_script:
     - corepack enable
-    - pnpm install --config.minimum-release-age=0 --no-frozen-lockfile
+    - pnpm install --no-frozen-lockfile
 
   script:
     - pnpm build
