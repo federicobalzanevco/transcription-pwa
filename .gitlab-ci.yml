@@ -5,7 +5,7 @@ pages:
 
   before_script:
     - corepack enable
-    - pnpm install --frozen-lockfile
+    - pnpm install --config.minimum-release-age=0 --frozen-lockfile
 
   script:
     - pnpm build
