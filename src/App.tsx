@@ -51,10 +51,10 @@ function App() {
     }
 
     return (
-        <div style={{display: "flex", flexDirection:"column", gap:15}}>
+        <div style={{display: "flex", flexDirection:"column", gap:15, width: "100vw", height: "100vh", justifyContent: "center", alignItems: "center"}}>
             <button onClick={() => startAudioRegistartion()}>START</button>
             <span>{recordingAudio ? "In ascolto...":"In attesa"}</span>
-            <span>{message}</span>
+            <span style={{maxWidth: "80%", minHeight: "200px", minWidth: "200px", border: "1px solid #d4d4d4", borderRadius: "10px", padding: "5px"}}>{message}</span>
         </div>
     )
 }
