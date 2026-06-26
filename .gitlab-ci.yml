@@ -8,6 +8,7 @@ pages:
 
   before_script:
     - corepack enable
+    - corepack prepare pnpm@10.17.1 --activate
     - pnpm install --no-frozen-lockfile
 
   script:
