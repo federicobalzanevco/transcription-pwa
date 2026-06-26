@@ -1,37 +1,62 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import appLogo from '/favicon.svg'
-import PWABadge from './PWABadge.tsx'
-import './App.css'
+import { useRef, useState } from "react";
+
 
 function App() {
-  const [count, setCount] = useState(0)
+    const [message, setMessage] = useState("")
+    const [recordingAudio, setRecordingAudio] = useState(false);
 
-  return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={appLogo} className="logo" alt="transcription-pwa logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>transcription-pwa</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-      <PWABadge />
-    </>
-  )
+    // Audio recognition
+    const recognition = useRef<any | null>(null);
+
+    const startAudioRegistartion = () => {
+        // Check authorization to access microphone
+        navigator.mediaDevices
+            .getUserMedia({ audio: true, video: false })
+            .then((_stream) => {
+                /* Permission granted, start recording audio */
+
+                /* Speech recognition */
+                const SpeechRecognitionAPI =
+                    window.SpeechRecognition ?? window.webkitSpeechRecognition;
+
+                if (!SpeechRecognitionAPI) {
+                    console.warn("Speech Recognition non supportata in questo browser");
+                    return;
+                }
+
+                recognition.current = new SpeechRecognitionAPI();
+
+                recognition.current.continuous = false;
+                recognition.current.lang = "it-IT";
+                recognition.current.interimResults = true;
+                recognition.current.maxAlternatives = 1;
+
+                recognition.current.onresult = (event: any) => {
+                    setMessage(event.results[0][0].transcript);
+                };
+
+                recognition.current.onaudioend = (_event: any) => {
+                    setRecordingAudio(false)
+                };
+
+                recognition.current.onstart = (_event: any) => {
+                    setRecordingAudio(true)
+                };
+
+                recognition.current.start();
+            })
+            .catch((_err) => {
+                /* Permission not granted */
+            });
+    }
+
+    return (
+        <div style={{display: "flex", flexDirection:"column", gap:15}}>
+            <button onClick={() => startAudioRegistartion()}>START</button>
+            <span>{recordingAudio ? "In ascolto...":"In attesa"}</span>
+            <span>{message}</span>
+        </div>
+    )
 }
 
 export default App
