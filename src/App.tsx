@@ -3,6 +3,7 @@ import { useRef, useState } from "react";
 
 function App() {
     const [message, setMessage] = useState("")
+    const [error, setError] = useState("")
     const [recordingAudio, setRecordingAudio] = useState(false);
 
     // Audio recognition
@@ -21,6 +22,7 @@ function App() {
 
                 if (!SpeechRecognitionAPI) {
                     console.warn("Speech Recognition non supportata in questo browser");
+                    setError("Speech Recognition non supportata in questo browser")
                     return;
                 }
 
@@ -45,16 +47,18 @@ function App() {
 
                 recognition.current.start();
             })
-            .catch((_err) => {
+            .catch((err) => {
                 /* Permission not granted */
+                setError("Permission not granted o altro " + err)
             });
     }
 
     return (
-        <div style={{display: "flex", flexDirection:"column", gap:15, width: "100vw", height: "100vh", justifyContent: "center", alignItems: "center"}}>
+        <div style={{ display: "flex", flexDirection: "column", gap: 15, width: "100vw", height: "100vh", justifyContent: "center", alignItems: "center" }}>
             <button onClick={() => startAudioRegistartion()}>START</button>
-            <span>{recordingAudio ? "In ascolto...":"In attesa"}</span>
-            <span style={{maxWidth: "80%", minHeight: "200px", minWidth: "200px", border: "1px solid #d4d4d4", borderRadius: "10px", padding: "5px"}}>{message}</span>
+            <span>{recordingAudio ? "In ascolto..." : "In attesa"}</span>
+            <span style={{ maxWidth: "80%", minHeight: "200px", minWidth: "200px", border: "1px solid #d4d4d4", borderRadius: "10px", padding: "5px" }}>{message}</span>
+            <span>{error}</span>
         </div>
     )
 }
